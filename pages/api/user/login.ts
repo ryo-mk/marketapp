@@ -1,13 +1,15 @@
+import type { NextApiResponse } from "next";
 import jwt from "jsonwebtoken";
 import connectDB from "../../../utils/database";
 import { UserModel } from "../../../utils/schemaModels";
+import { ResMessageType, SavedUserDataType, ExtendedNextApiRequestUser } from "../../../utils/types";
 
 const secret_key = "nextmarket";
 
-const loginUser = async (req, res) => {
+const loginUser = async (req: ExtendedNextApiRequestUser, res: NextApiResponse<ResMessageType>) => {
   try {
     await connectDB();
-    const savedUserData = await UserModel.findOne({ email: req.body.email });
+    const savedUserData: SavedUserDataType | null = await UserModel.findOne({ email: req.body.email });
     // ユーザー確認
     if (savedUserData) {
       // パスワード確認
@@ -25,7 +27,7 @@ const loginUser = async (req, res) => {
       return res.status(400).json({ message: "ログイン失敗：ユーザー登録をしてください" });
     }
   } catch (err) {
-    return res.status(400).jason({ message: "ログイン失敗" });
+    return res.status(400).json({ message: "ログイン失敗" });
   }
 };
 
